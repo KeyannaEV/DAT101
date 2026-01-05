@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="favicon.ico" type="image/x-icon" />
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+    <title>Sonic Example</title>
+    <style>
+      .prevent-select {
+        -webkit-user-select: none; /* Safari */
+        -ms-user-select: none; /* IE 10 and IE 11 */
+        user-select: none; /* Standard syntax */
+      }
+    </style>
+  </head>
+  <body class="prevent-select">
+    <canvas id="cvs" style="background-color: antiquewhite" width="1024" height="512"></canvas>
+  </body>
+  <script defer>
+    const cvs = document.getElementById("cvs");
+    const ctx = cvs.getContext("2d");
+    const sonicPath = "sonic_sprite_sheet.png";
+    const sonicSheet = new Image(); // image er en klasse. New roper på klassen (Image). Operatoren viser alt oppe blir et bilde.
+    const SonicRunning = {x: 0, y: 127, width: 102, height: 121, count: 9};
+
+    let posX = 0;
+    let hero = SonicRunning;
+
+    function animate(){
+      ctx.clearRect(0, 0, cvs.width, cvs.height);
+      const dx = 0, dy = 100, dw = SonicRunning.width, dh = SonicRunning.height; //hjelpe variabler for ctx.drawImage
+      const sx = frameNumber * SonicRunning.width, sy = SonicRunning.y, sw = SonicRunning.width, sh = SonicRunning.height;
+      ctx.drawImage(sonicSheet, sx, sy, sw, sh, dx + posX, dy, dw, dh);
+      posX += 50;
+
+      if(posX >= cvs.width - SonicRunning.width){
+        frameNumber++;
+        if(frameNumber >= SonicRunning.count){
+          frameNumber = 0;
+        } 
+        posX += 15;
+        console.log(posX);
+      } else {
+        posX = cvs.width - SonicRunning.width;
+      }
+    }
+    function sonicSheetLoaded(){
+      console.log("Sprite Sheet Loaded!");
+      setInterval(animate, 75);
+    }
+    sonicSheet.addEventListener("load", sonicSheetLoaded);
+    sonicSheet.src = sonicPath;
+
+
+  </script>
+</html>
