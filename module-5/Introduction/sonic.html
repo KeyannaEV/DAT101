@@ -13,44 +13,129 @@
         user-select: none; /* Standard syntax */
       }
     </style>
+    <!-- Import map: map the bare specifier "three" to the local module build. -->
+    <script type="importmap">
+      {
+        "imports": {
+          "libSprite": "../../common/script/libSprite.mjs",
+          "lib2d": "../../common/script/lib2d.mjs"
+        }
+      }
+    </script>
   </head>
   <body class="prevent-select">
-    <canvas id="cvs" style="background-color: antiquewhite" width="1024" height="512"></canvas>
+    <canvas id="cvs" style="background-color: hsl(40, 83%, 91%)" width="1024" height="512"></canvas>
   </body>
-  <script defer>
-    const cvs = document.getElementById("cvs");
-    const ctx = cvs.getContext("2d");
-    const sonicPath = "sonic_sprite_sheet.png";
-    const sonicSheet = new Image(); // image er en klasse. New roper på klassen (Image). Operatoren viser alt oppe blir et bilde.
-    const SonicRunning = {x: 0, y: 127, width: 102, height: 121, count: 9};
+  <script type="module"> // Skrive inn type="module"
+    //plotte elementer øverst av koden "Import libraries":
+    import { TSpriteCanvas, TSprite } from "libSprite"; //importere fra linje 20 "libsprite"
 
-    let posX = 0;
-    let hero = SonicRunning;
+    // Global variables
+    
+    // prettier-ignore
+    const SpriteInfoList = {
+      sonic1: { x: 0, y:   0, width: 102, height: 125, count: 6},
+      sonic2: { x: 0, y: 125, width: 102, height: 125, count: 9},
+      sonic3: { x: 0, y: 250, width: 102, height: 125, count: 9},
+      sonic4: { x: 0, y: 375, width: 102, height:  75, count: 7},
+      sonic5: { x: 0, y: 450, width: 100, height: 130, count: 5},
+      sonic6: { x: 0, y: 575, width: 102, height: 125, count: 3},
+      sonic7: { x: 0, y: 700, width: 102, height: 125, count: 2},
+      sonic8: { x: 0, y: 825, width: 102, height: 125, count: 2},
+      sonic9: { x: 0, y: 956, width: 102, height: 140, count: 4}
+    }
+    
+    const cvs = document.getElementById("cvs"); //canvas
+    const ctx = cvs.getContext("2d"); // trenger ikke, men kan være nyttig
+    const spcvs = new TSpriteCanvas(cvs); // lage et sprite canvas objekt
+    const hero = new TSprite(spcvs, SpriteInfoList.sonic4, 0, 100); // Danner helten, men dukker ikke opp.
+    const hero2 = new TSprite(spcvs, SpriteInfoList.sonic3, 100, 250); // Danner helten, men dukker ikke opp.
+    const hero3 = new TSprite(spcvs, SpriteInfoList.sonic2, 200, 350);
+    const hero4 = new TSprite(spcvs, SpriteInfoList.sonic1, 300, 390);
 
+
+
+    // FUNCTIONS
+
+    function drawCanvas(){ // Tegner bildet på lerretet
+      // This is a high performance drawing function.
+      // do not do any heavy calculations here.
+
+      hero.draw();
+      hero2.draw();
+      hero3.draw();
+      hero4.draw();
+
+    }
+
+    let dir = 1; // 1 = left, -1 = right.
+    let dir2 = 1;
+
+    //Function that animates sonic horizontally
     function animate(){
-      ctx.clearRect(0, 0, cvs.width, cvs.height);
-      const dx = 0, dy = 100, dw = SonicRunning.width, dh = SonicRunning.height; //hjelpe variabler for ctx.drawImage
-      const sx = frameNumber * SonicRunning.width, sy = SonicRunning.y, sw = SonicRunning.width, sh = SonicRunning.height;
-      ctx.drawImage(sonicSheet, sx, sy, sw, sh, dx + posX, dy, dw, dh);
-      posX += 50;
-
-      if(posX >= cvs.width - SonicRunning.width){
-        frameNumber++;
-        if(frameNumber >= SonicRunning.count){
-          frameNumber = 0;
-        } 
-        posX += 15;
-        console.log(posX);
-      } else {
-        posX = cvs.width - SonicRunning.width;
+      hero.x += 6 * dir; // Hastighet
+      console.log(hero.x); // Sjekker posisjonen til helten i konsollen.
+      if ((hero.x > cvs.width - hero.width) || (hero.x + hero.width < 0 && dir < 0)) {
+        //hero.x = -hero.width; -> Kommer tilbake fra venstre side. hero.x = 0 starter den fra start posisjonen.
+        dir *= -1; // 1 * -1 = -1 og -1 * -1 = 1 -> endrer retning.
+        hero.flipHorizontal(); // Speilvender helten når den snur.
+        hero2.hidden = !hero2.hidden; // toggler sonic 2 hver gang sonic 1 snur.
+        //hero2.hidden = false; -> viser sonic 2 når sonic 1 forsvinner.
+        hero3.hidden = !hero3.hidden;
       }
     }
-    function sonicSheetLoaded(){
-      console.log("Sprite Sheet Loaded!");
-      setInterval(animate, 75);
+
+    /*function animate2(){ 
+      hero2.x += 10 * dir2;
+      if ((hero2.x > cvs.width - hero2.width) || (hero2.x + hero2.width < 0 && dir2 < 0)) {
+        dir2 *= -1;
+        hero2.flipHorizontal();
+      }
+    } */
+
+    function sheetLoaded(){
+      console.log("Sheet Loaded"); // vises i html console når koden kjøres riktig.
+      spcvs.showFramerate = true; // viser bildefrekvens
+      spcvs.onDraw = drawCanvas; // tegner med canvas funksjonen.
+
+      // Setter egenskaper på Sonic
+      hero.animationSpeed = 20; // Animerer helten. Farten går i %, og er basert på FPS.
+      hero.rotation = 0; // Vinkel på Sonic.
+      hero2.animationSpeed = 20;
+      hero2.rotation = 45;
+      hero2.hidden = true; // skjuler sonic 2. 
+      hero3.animationSpeed = 15; 
+      hero3.hidden = true;
+      hero4.animationSpeed = 15;
+
+      // Start animasjon bortover
+      setInterval(animate, 20); //går på CPU
+      //setInterval(animate2, 20);
     }
-    sonicSheet.addEventListener("load", sonicSheetLoaded);
-    sonicSheet.src = sonicPath;
+
+    // Keyboard input handling
+    function onKeyDown(aEvent){
+      switch(aEvent.code){
+        case "ArrowUp":
+          hero4.y -= 8; // kan endre hastighet etter =
+          break;
+        case "ArrowDown":
+          hero4.y += 8;
+          break;
+        case "ArrowLeft":
+          hero4.x -= 8;
+          break;
+        case "ArrowRight":
+          hero4.x += 8;
+          break;
+      }
+    }
+
+
+    // Main application
+    spcvs.loadSpriteImage("sonic_sprite_sheet.png", sheetLoaded); //finne og skriv inn navn av png filen
+    document.addEventListener("keydown", onKeyDown);
+
 
 
   </script>
