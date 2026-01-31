@@ -153,6 +153,6 @@ myAccount.deposit(12, CurrencyTypes.USD);
 myAccount.withdraw(10, CurrencyTypes.GBP);
 myAccount.setCurrencyType(CurrencyTypes.CAD);
 myAccount.setCurrencyType(CurrencyTypes.INR);
-myAccount.withdraw(150.11, CurrencyTypes.SEK);
+myAccount.withdraw(150.1585, CurrencyTypes.SEK);
 
 printOut(newLine);
