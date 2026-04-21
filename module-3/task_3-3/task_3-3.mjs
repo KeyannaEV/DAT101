@@ -3,272 +3,334 @@ import { printOut, newLine } from "../../common/script/utils.mjs";
 
 printOut("--- Part 1 ----------------------------------------------------------------------------------------------");
 /* Put your code below here!*/
-
-function todaysDate() {
+printOut(`
+Create a function that takes no parameters and returns no values. Have it print today's date in the Norwegian standard.
+Example: "Friday, October 18, 2019" Use an example from this resource:
+toLocaleString , Use "no-NB" as an alias for the Norwegian language in the function call to "toLocaleDateString".
+`);
+function Part1PrintDate() {
   const today = new Date();
-
-  const options = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
-  return today.toLocaleDateString("no-NB", options);
+  const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+  const norwegianDate = today.toLocaleDateString('no-NB', options);
+  printOut(norwegianDate);
 }
+Part1PrintDate();
 
-printOut(todaysDate());
 printOut(newLine);
 
 printOut("--- Part 2 ----------------------------------------------------------------------------------------------");
 /* Put your code below here!*/
+printOut(`
+<strong>Level Up Your Date Function:</strong><br>
+Take your "Today's Date" function from Task 1 and supercharge it!<br>
+Not only should it display today's date in elegant Norwegian fashion,<br>but it also needs to return that date as a powerful date object, ready for further manipulation.<br>
+<strong>The Hype Train is Leaving the Station:</strong><br>
+Craft a new function that calculates the number of days left until the epic release of 2XKO,<br>the highly-anticipated tag-team fighting game set in the League of Legends universe,<br>launching on May 14th, 2026.<br>
+<strong>Time for the Grand Reveal:</strong><br>
+Combine the might of your two functions to print today's date and the thrilling countdown to 2XKO's debut.<br>Feel free to add a bit of flair to your output - maybe a themed message or a touch of visual excitement!
+`);
 
-function daysUntilEvent(){
-    const releaseDate = new Date("2025-05-14");
-    const today = new Date();
-
-    const msPerDay = 1000 * 60 * 60 * 24;
-    const timeDiff = releaseDate - today;
-
-    return Math.ceil(timeDiff / msPerDay);
+function Part2GetTodayDate() {
+  const today = new Date();
+  const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+  const norwegianDate = today.toLocaleDateString('no-NB', options);
+  printOut(`<h5>Today's Date: ${norwegianDate}</h5>`);
+  return today;
 }
 
-function daysLeftEvent() {
-    const today = todaysDate();
-    const daysLeft = daysUntilEvent();
-
-    return `Det var ${daysLeft} dager siden av den episke lanseringen av 2XKO! `;
+function Part2DaysUntil2XKO(aTodayDate) {
+  const releaseDate = new Date('2026-05-14');
+  const timeDiff = releaseDate - aTodayDate;
+  const daysDiff = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
+  printOut(`<h3>Days until 2XKO release: ${daysDiff} days</h3><p>Get ready for an epic gaming experience!</p>`);
 }
-
-printOut("Dagens dato: " + todaysDate());
-printOut(daysLeftEvent());
+const todayDate = Part2GetTodayDate();
+Part2DaysUntil2XKO(todayDate);
 
 printOut(newLine);
 
 printOut("--- Part 3 ----------------------------------------------------------------------------------------------");
 /* Put your code below here!*/
-
-function radiusCircle(radius) {
-    const diameter = radius * 2;
-    const circumference = Math.PI * diameter;
-    const area = Math.PI * radius * radius;
-
-    return { diameter, area, circumference };
+printOut(`Create a function that receives the radius of a circle and prints the diameter, circumference, and area.`);
+function Part3CalculateCircle(aRadius) {
+  const diameter = 2 * aRadius;
+  const circumference = 2 * Math.PI * aRadius;
+  const area = Math.PI * aRadius * aRadius;
+  printOut(`For a circle with radius ${aRadius}:`);
+  printOut(`
+    <ul>
+      <li>Diameter: ${diameter.toFixed(2)}</li>
+      <li>Circumference: ${circumference.toFixed(2)}</li>
+      <li>Area: ${area.toFixed(2)}</li>
+    </ul>
+  `);
 }
+Part3CalculateCircle(5);
 
-printOut("Diameter: " + radiusCircle(5).diameter.toFixed(0));
-printOut("Circumference: " + radiusCircle(5).circumference.toFixed(2));
-printOut("Areal: " + radiusCircle(5).area.toFixed(2));
 printOut(newLine);
 
 printOut("--- Part 4 ----------------------------------------------------------------------------------------------");
 /* Put your code below here!*/
-
-function rectangle(rect){
-    const width = rect.width;
-    const height = rect.height;
-
-    const circumference = 2 * (height + width);
-    const area = height * width;
-
-    return { width, height: height.toFixed(2), circumference: circumference.toFixed(2), area: area.toFixed(2) };
-
+printOut(`Create a function that receives the width and height of a rectangle in an object.<br>Print the circumference and area of the given rectangle.`);
+function Part4CalculateRectangle(aRectangle) {
+  const circumference = 2 * (aRectangle.width + aRectangle.height);
+  const area = aRectangle.width * aRectangle.height;
+  printOut(`For a rectangle with width ${aRectangle.width} and height ${aRectangle.height}:`);
+  printOut(`
+    <ul>
+      <li>Circumference: ${circumference.toFixed(2)}</li>
+      <li>Area: ${area.toFixed(2)}</li>
+    </ul>
+  `);
 }
-const rectInfo = rectangle({ height: 3, width: 4 });
-
-printOut("Width: " + rectInfo.width + ", Height: " + rectInfo.height);
-printOut("Circumference: " + rectInfo.circumference);
-printOut("Area: " + rectInfo.area);
-
+Part4CalculateRectangle({ width: 4, height: 7 });
 printOut(newLine);
 
 printOut("--- Part 5 ----------------------------------------------------------------------------------------------");
 /* Put your code below here!*/
-
-function convertTemp(temp, type){
-    let celsius, fahrenheit, kelvin;
-
-    if(type === "C"){
-        celsius = temp;
-        fahrenheit = (temp * 9/5) + 32;
-        kelvin = temp + 273.15;
-
-    } else if(type === "F"){
-        celsius = (temp - 32) * 5/9;
-        fahrenheit = temp;
-        kelvin = celsius + 273.15;
-    } else if(type === "K"){
-        celsius = temp - 273.15;
-        fahrenheit = (celsius * 9/5) + 32;
-        kelvin = temp;
-    } else {
-        throw new Error("Invalid temperature type");
-    }
-
-    return {celsius: celsius.toFixed(0), fahrenheit: fahrenheit.toFixed(0), kelvin: kelvin.toFixed(0)};
+printOut(`
+Create a function that handles the conversion between Celsius, Fahrenheit, and Kelvin. <br>
+Use three different numbers and print all three combinations as integers (no decimals). <br>
+Design the function to take two parameters: first the temperature, then the temperature type/id. <br>
+Use these parameters to convert to the other two temperature types and print them. Formula:<br>
+<ul>
+<li>Fahrenheit = (Kelvin − 273.15) × 9/5 + 32</li>
+<li>Celsius = Kelvin − 273.15</li>
+<li>Celsius = (Fahrenheit − 32) × 5/9</li>
+</ul>
+  `)
+const ETempType = {
+  Kelvin: 1,
+  Celsius: 2,
+  Fahrenheit: 3,
 }
 
-const convCelsius = convertTemp(47, "C");
-printOut(
-    `Convert ${convCelsius.celsius} Celsius${newLine}` +
-    `Celsius: ${convCelsius.celsius}${newLine}` +
-    `Fahrenheit: ${convCelsius.fahrenheit}${newLine}` +
-    `Kelvin: ${convCelsius.kelvin}${newLine}`
-);
+function Part5ConvertTemp(aTemp, aTempType){
+  let kelvin = 0, celsius = 0, fahrenheit = 0;
+  let tempTypeName = "";
 
-const convFahrenheit = convertTemp(100, "F");
-printOut(
-    `Convert ${convFahrenheit.fahrenheit} Fahrenheit${newLine}` +
-    `Celsius: ${convFahrenheit.celsius}${newLine}` +
-    `Fahrenheit: ${convFahrenheit.fahrenheit}${newLine}` +
-    `Kelvin: ${convFahrenheit.kelvin}${newLine}`
-);
-const convKelvin = convertTemp(300, "K");
-printOut(
-    `Convert ${convKelvin.kelvin} Kelvin${newLine}` +
-    `Celsius: ${convKelvin.celsius}${newLine}` +
-    `Fahrenheit: ${convKelvin.fahrenheit}${newLine}` +
-    `Kelvin: ${convKelvin.kelvin}${newLine}`
-);
+  switch(aTempType){
+    case ETempType.Kelvin:
+      kelvin = aTemp;
+      celsius = kelvin - 273.15;
+      fahrenheit = (kelvin - 273.15) * 9/5 + 32;
+      tempTypeName = "Kelvin";
+    break;
+    case ETempType.Celsius:
+      celsius = aTemp;
+      kelvin = celsius + 273.15;
+      fahrenheit = (celsius * 9/5) + 32;
+      tempTypeName = "Celsius";
+    break;
+    case ETempType.Fahrenheit:
+      fahrenheit = aTemp;
+      celsius = (fahrenheit - 32) * 5/9;
+      kelvin = celsius + 273.15;
+      tempTypeName = "Fahrenheit";
+    break;
+  }
+  printOut(`Convert from ${aTemp} ${tempTypeName}:`);
+  printOut(`&nbsp;Kelvin: ${Math.round(kelvin)}`);
+  printOut(`&nbsp;Celsius: ${celsius.toFixed(0)}`);
+  printOut(`&nbsp;Fahrenheit: ${fahrenheit.toFixed(0)}`);
+  printOut("");
+}
+
+Part5ConvertTemp(300, ETempType.Kelvin);
+Part5ConvertTemp(26.85, ETempType.Celsius);
+Part5ConvertTemp(80.33, ETempType.Fahrenheit);
+printOut(newLine);
 
 printOut("--- Part 6 ----------------------------------------------------------------------------------------------");
-/* Put your code below here!*/
-
-function calculatePrice(gross, taxGroup){
-    let vat;
-    let group = String(taxGroup).toLowerCase();
-
-    if (group === "normal")
-        vat = 25;
-    else if (group === "food")
-        vat = 15;
-    else if (group === "hotel" || group === "transport" || group === "cinema")
-        vat = 10;
-    else {
-        printOut(group + " is Unknown VAT group!");
-        return NaN;
-    }
-
-    let net = (100 * gross) / (vat + 100);
-
-    printOut(
-        `${gross} is ${net.toFixed(2)} without TAX`)
+printOut(`
+Create a function that calculates the price without VAT (sales tax).<br>
+The function needs two arguments,<br>
+one for the price including VAT (gross amount) and one for the tax group in text:<br>
+<ul>
+<li>normal = 25%</li>
+<li>food = 15%</li>
+<li>hotel, transport, and cinema = 10%</li>
+</ul>
+The text argument should not be case-sensitive.<br>
+If  the VAT group is not correct, the text "Unknown VAT group!" should be printed.<br>
+The function must return the price without tax, i.e., the net price.<br>
+Call the function four times with different gross amounts.<br>
+One for each of the VAT groups (25, 15, and 10) and one with an unknown group for example “goblins”.<br>
+Tip: Use "NaN" to identify that an unknown VAT group is returned from the function.<br>
+<strong>Formula: net = (100 * gross) / (vat + 100).</strong>
+<br>
+`);
+function Part6Calculate(aGrossAmount, aTaxGroup) {
+  const taxGroup = aTaxGroup.toLowerCase();
+  let taxRate = 0;
+  switch (taxGroup) {
+    case "normal":
+      taxRate = 25;
+      break;
+    case "food":
+      taxRate = 15;
+      break;
+    case "hotel":
+    case "transport":
+    case "cinema":
+      taxRate = 10;
+      break;
+    default:
+      printOut("Error: Unknown tax group!");
+      return;
+  }
+  const netAmount = (100 * aGrossAmount) / (taxRate + 100);
+  printOut(`Gross amount: ${aGrossAmount.toFixed(2)}`);
+  printOut(`Tax group: ${aTaxGroup}, Tax rate: ${taxRate}%`);
+  printOut(`Net amount: ${netAmount.toFixed(2)}`);
+  printOut("");
 }
 
-calculatePrice(100, "normal");
-calculatePrice(150, "food");
-calculatePrice(50, "hotel");
-calculatePrice(100, "goblins");
+Part6Calculate(100, "Normal");
+Part6Calculate(100, "Food");
+Part6Calculate(100, "Hotel");
+Part6Calculate(100, "Transport");
+Part6Calculate(100, "Cinema");
+Part6Calculate(100, "Car");
 
 printOut(newLine);
 
 printOut("--- Part 7 ----------------------------------------------------------------------------------------------");
 /* Put your code below here!*/
-
-function calculateSDT(speed, distance, time) {
-    const missing = [speed, distance, time].filter(value => value === undefined || value === null).length;
-
-    if (missing > 1) {
-        if (speed == null) speed = NaN;
-        if (distance == null) distance = NaN;
-        if (time == null) time = NaN;
-    } else {
-        if (speed == null) {speed = distance / time;}
-        else if (distance == null) {distance = speed * time;}
-        else if (time == null) {time = distance / speed;}
+printOut(`
+Create a function that takes 3 arguments and returns the following calculation:<br>
+<strong>Speed = Distance / Time</strong><br>
+If speed is missing, calculate speed.<br>
+If time is missing, calculate time.<br>
+If distance is missing, calculate the distance.<br>
+If more than one parameter is missing, return NaN.
+`);
+function Part7CalculateSpeedDistanceTime(aDistance, aTime, aSpeed) {
+  if (aSpeed === null) {
+    // Calculate speed
+    if( !aTime || aTime === 0 || !aDistance ) {
+      printOut("Error: Time or Distance cannot be zero or null when calculating speed!");
+      return NaN;
     }
-
-    printOut(
-        `Speed = ${speed.toFixed(2)} km/h ${newLine}
-        Distance: ${distance.toFixed(2)} km ${newLine}
-        Time: ${time.toFixed(2)} h ${newLine}`);
-
-    return {speed, distance, time};
+    aSpeed = aDistance / aTime;
+    printOut(`Calculated Speed: ${aSpeed.toFixed(2)} units/time`);
+    return aSpeed;
+  } else if (aTime === null) {
+    // Calculate time
+    if( !aSpeed || aSpeed === 0 || !aDistance ) {
+      printOut("Error: Speed or Distance cannot be zero or null when calculating time!");
+      return NaN;
+    }
+    aTime = aDistance / aSpeed;
+    printOut(`Calculated Time: ${aTime.toFixed(2)} time units`);
+    return aTime;
+  } else if (aDistance === null) {
+    // Calculate distance
+    if( !aSpeed || !aTime) {
+      printOut("Error: Speed or Time cannot be null when calculating distance!");
+      return NaN;
+    }
+    aDistance = aSpeed * aTime;
+    printOut(`Calculated Distance: ${aDistance.toFixed(2)} units`);
+    return aDistance;
+  }
 }
-
-calculateSDT(75,50,null);
-calculateSDT(null,120,2);
-calculateSDT(70,null,1.50);
-calculateSDT(null,50,null);
-
+Part7CalculateSpeedDistanceTime(100, 2, null); // Calculate speed
+Part7CalculateSpeedDistanceTime(100, null, 50); // Calculate time
+Part7CalculateSpeedDistanceTime(null, 2, 50); // Calculate distance
+Part7CalculateSpeedDistanceTime(null, null, 50); // Error case
 printOut(newLine);
 
 printOut("--- Part 8 ----------------------------------------------------------------------------------------------");
 /* Put your code below here!*/
-
-function newString(text, maxLength, char, booleanValue){
-    if (text.length < maxLength){
-        const padLength = maxLength - text.length;
-        const fillString = char.repeat(padLength);
-
-        text = booleanValue ? fillString + text : text + fillString;
+printOut(`
+Create a function that takes four parameters and returns a result.<br>
+Parameter one: A text string. Parameter two: Value for the maximum size of the text string.<br>
+Parameter three: Text character. Parameter four: Consecutive insertion of characters (boolean value).<br>
+Take the text parameter; if it's smaller than the maximum, make it larger with the specified character, either before or after, using the given boolean value.<br>
+Have the function return the new string and print it out.`);
+printOut(newLine);
+function Part8AdjustString(aText, aMaxSize, aChar, aInsertAtEnd) {
+  let adjustedText = aText;
+  let length = aText.length;
+  while (length < aMaxSize) {
+    if (aInsertAtEnd) {
+      adjustedText += aChar;
+    } else {
+      adjustedText = aChar + adjustedText;
     }
-
-    printOut(` ${text} `);
-    return text;
+    length++;
+  }
+  printOut(`Adjusted String: "${adjustedText}"`);
+  return adjustedText;
 }
-newString("This is a text", 15, " aaaaa", true);
-newString("This is a text", 15, "", false);
-
+Part8AdjustString("Hello", 30, "*", true); // Insert at end
+Part8AdjustString("World", 25, "#", false); // Insert at beginning
+Part8AdjustString("This is a right aligned text.", 50, "&nbsp;", false); // Right align with spaces
 printOut(newLine);
 
 printOut("--- Part 9 ----------------------------------------------------------------------------------------------");
 /* Put your code below here!*/
-
-function sumRange(start, count){
-    let sum = 0;
-    for (let i = start; i < start + count; i++) {
-        sum += i;
+printOut(`
+From mathematics, we have the following expression:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1 +  2 =  3<br>             
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4 +  5 +  6 =  7 +  8<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;9 + 10 + 11 + 12 = 13 + 14 + 15<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;16 + 17 + 18 + 19 + 20 = 21 + 22 + 23 + 24<br>
+&nbsp;25 + 26 + 27 + 28 + 29 + 30 = 31 + 32 + 33 + 34 + 35<br>
+Create a function or functions that can test this expression for 200 lines.<br>
+If the test fails, print out where the two sides are not equal and stop the loop.<br>
+If all 200 lines are OK, print "Maths fun!".
+`);
+printOut(newLine);
+function Part9TestMathExpression(aLines) {
+  let currentNumber = 1;
+  for (let line = 1; line <= aLines; line++) {
+    let leftSum = 0;
+    let rightSum = 0;
+    // Calculate left side, one more number than right side
+    for (let i = 0; i < line + 1; i++) {
+      leftSum += currentNumber++;
     }
-    return sum;
+    // Calculate right side
+    for (let i = 0; i < line; i++) {
+      rightSum += currentNumber++;
+    }
+    if (leftSum !== rightSum) {
+      printOut(`Test failed at line ${line}: Left sum (${leftSum}) != Right sum (${rightSum})`);
+      return;
+    }
+  }
+  printOut("Maths fun!");
 }
 
-function testMathExpression(lines){
-    let current = 1;
-
-    for (let line = 1; line <= lines; line++) {
-        const left = [];
-        const right = [];
-
-        // FILL LEFT AND RIGHT ARRAY
-        for (let i = 0; i < line + 1; i++) {
-            left.push(current++);
-        }
-
-        for (let i = 0; i < line; i++) {
-            right.push(current++);
-        }
-
-        //CALCULATE SUM
-        let leftSum = 0;
-        for (let num of left) {
-            leftSum += num;
-        }
-        let rightSum = 0;
-        for (let num of right) {
-            rightSum += num;
-        }
-
-        printOut(left.join(" ") + " = " + right.join(" ")); // print left and right side
-
-        if (leftSum !== rightSum) {
-            printOut(`Mismatch at line ${line}: Left = ${leftSum}, Right = ${rightSum}`);
-            return;
-        }
-    }
-    printOut("Maths fun!");
-}
-
-testMathExpression(10);
-
+Part9TestMathExpression(200);
 printOut(newLine);
 
 /* Task 10*/
 printOut("--- Part 10 ---------------------------------------------------------------------------------------------");
 /* Put your code below here!*/
-
-function recursiveSum(n) {
-    if (n === 0 || n === 1) {
-        return 1;
-    }
-
-    return n * recursiveSum(n - 1);
+printOut(`
+Recursive function. Create a function that calculates the factorial of a given number.<br>
+Factorial of 5 = 5 * 4 * 3 * 2 * 1. Factorial of 6 = 6 * 5 * 4 * 3 * 2 * 1. Etc.<br>
+Have the function call itself to calculate the result and print the final answer.<br>
+Print the result of each intermediate multiplication step as well.
+<br>
+`);
+let Part10IntermediateSteps = "";
+let Part10Step = 0;
+function Part10Factorial(aNumber) {
+  if (aNumber <= 1) {
+    return 1;
+  } else {
+    const result = aNumber * Part10Factorial(aNumber - 1);
+    Part10Step++;
+    Part10IntermediateSteps += `Step ${Part10Step}: ${aNumber} * Factorial(${aNumber - 1}) = ${result}<br>`;
+    return result;
+  }
 }
-
-let number = 9;
-let result = recursiveSum(number);
-printOut(`factorial(${number}) is ${result}`);
+const numberForFactorial = 5;
+const factorialResult = Part10Factorial(numberForFactorial);
+printOut(`Factorial of ${numberForFactorial} is ${factorialResult}`);
+printOut("Intermediate Steps:<br>" + Part10IntermediateSteps);
+printOut(newLine);

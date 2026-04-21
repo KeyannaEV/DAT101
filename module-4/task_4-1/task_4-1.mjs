@@ -1,13 +1,14 @@
 "use strict";
 import { printOut, newLine } from "../../common/script/utils.mjs";
 
-const AccountType = {
-    Normal: "Brukskonto",
-    Saving: "Sparekonto",
-    Credit: "Kreditkonto",
-    Pension: "Pensjonskonto"
-}
+const AccountTypes = {
+  Normal: "Brukskonto",
+  Saving: "Sparekonto",
+  Credit: "Kredittkonto",
+  Pensjon: "Pensjonskonto",
+};
 
+// This regards part 5! You can find this on gitHub.
 const CurrencyTypes = {
   NOK: { value: 1.0000, name: "Norske kroner", denomination: "kr" },
   EUR: { value: 0.0985, name: "Europeiske euro", denomination: "€" },
@@ -21,126 +22,128 @@ const CurrencyTypes = {
   THB: { value: 3.3289, name: "Thai baht", denomination: "฿" }
 };
 
-class TAccount {
-    #type = 0;
-    #balance = 0;
-    #withdrawCount = 0;
-    #currency = null;
+class TBankAccount {
+  #type = 0;
+  #balance = 0;
+  #withdrawCount = 0;
+  #currency = null;
 
-    constructor(aType) {
-        this.#type = aType;
-        this.#currency = CurrencyTypes.NOK;
-    }
+  constructor(aType) {
+    this.#type = aType;
+    this.#currency = CurrencyTypes.NOK;
+  }
 
-    #currencyConverter(aType){
-        return aType.value / this.#currency.value;
-    }
+  #currencyConvert(aType){
+    return CurrencyTypes.NOK.value / this.#currency.value * aType.value;
+  }
 
-    toString() {
-        return this.#type;
-    }
+  toString() {
+    return this.#type;
+  }
 
-    setType(aType) {
-        this.#withdrawCount = 0;
-        let oldType = `Account type changed from ${this.toString()}`;
-        this.#type = aType;
-        oldType = `${oldType} to ${this.toString()}`;
-        printOut(oldType);
-    }
+  setType(aType) {
+    this.#withdrawCount = 0;
+    let txtOut = "The account type has change from " + this.toString();
+    this.#type = aType;
+    txtOut += " to " + this.toString();
+    printOut(txtOut);
+  }
 
-    getBalance() {
-        return this.#balance.toFixed(2);
-    }
+  getBalance() {
+    return this.#balance.toFixed(2);
+  }
 
-    deposit(aAmount, aCurrencyType = CurrencyTypes.NOK){
-        this.#withdrawCount = 0;
-        const exchange = this.#currencyConverter(aCurrencyType);
-        const newAmount = aAmount / exchange;
-        this.#balance += newAmount;
-        const den = this.#currency.denomination;
-        printOut(`Deposit of ${aAmount} ${aCurrencyType.name}, new balance is ${this.#balance.toFixed(2)} ${den}.`);
-    }
+  deposit(aAmount, aCurrencyType = CurrencyTypes.NOK) {
+    this.#withdrawCount = 0;
+    const exchange = this.#currencyConvert(aCurrencyType);
+    const newAmount = aAmount / exchange;
+    this.#balance += newAmount;
+    const den = this.#currency.denomination;
+    const name = aCurrencyType.name;
+    printOut("Deposit of " + aAmount + " " + name + ", new balance is " + this.#balance.toFixed(2) + den);
+  }
 
-    withdraw(aAmount, aCurrencyType = CurrencyTypes.NOK){
-        switch (this.#type){
-            case AccountType.Pension:
-                printOut(`You can´t withdraw from ${this.#type}`);
-                return;
-            case AccountType.Saving:
-                this.#withdrawCount++;
-                if(this.#withdrawCount > 3){
-                    printOut(`You can´t withdraw from ${this.#type} more than three times!`);
-                    return;
-                }
-                break;
+  withdraw(aAmount, aCurrencyType = CurrencyTypes.NOK) {
+    switch (this.#type) {
+      case AccountTypes.Pensjon:
+        printOut("You can not withdraw from " + this.#type);
+        return;
+      case AccountTypes.Saving:
+        this.#withdrawCount++;
+        if(this.#withdrawCount > 3){
+          printOut("You can not withdraw from " + this.#type + " more than three times");
+          return;
         }
-        const exchange = this.#currencyConverter(aCurrencyType);
-        const newAmount = aAmount / exchange;
-        this.#balance -= newAmount;
-        const den = this.#currency.denomination;
-        printOut(`Withdraw of ${aAmount} ${aCurrencyType.name}, new balance is ${this.#balance.toFixed(2)} ${den}.`);
+        break;
     }
+    const exchange = this.#currencyConvert(aCurrencyType);
+    const newAmount = aAmount / exchange;
+    this.#balance -= newAmount;
+    const den = this.#currency.denomination;
+    const name = aCurrencyType.name;
+    printOut("Withdraw of " + aAmount + " " + name + ", new balance is " + this.#balance.toFixed(2) + den);
+  }
 
-    setCurrencyType(aType) {
-        if (this.#currency === aType){
-            return;
-        }
-        printOut(`The currency has changed from ${this.#currency.name} to ${aType.name}.`);
-        const exchange = this.#currencyConverter(aType);
-        this.#currency = aType;
-        this.#balance *= exchange;
-        printOut(`New balance is ${this.#balance.toFixed(2)} ${this.#currency.denomination}.`);
+  setCurrencyType(aType){
+    if(this.#currency === aType){
+      return;
     }
+    printOut("The currency has changed from " + this.#currency.name + " to " + aType.name);
+    const exchange = this.#currencyConvert(aType);
+    this.#currency = aType;
+    this.#balance *= exchange;
+    printOut("New balance is " + this.#balance.toFixed(2) + this.#currency.denomination);
+  }
 }
+
 printOut("--- Part 1 ----------------------------------------------------------------------------------------------");
 /* Put your code below here!*/
-
-printOut(Object.values(AccountType).join(", "));
+// Print all these types on a single comma-separated line:
+// Get all object values:
+const accountTypeValues = Object.values(AccountTypes);
+// Join them in a single string with commas:
+const part1Text = accountTypeValues.join(", ");
+// Print the result:
+printOut(part1Text);
 printOut(newLine);
 
 printOut("--- Part 2 ----------------------------------------------------------------------------------------------");
 /* Put your code below here!*/
 
-const myAccount = new TAccount(AccountType.Normal);
-printOut(`myAccount = ${myAccount.toString()}`);
-myAccount.setType(AccountType.Saving);
-printOut(`myAccount = ${myAccount.toString()}`);
-
+const myAccount = new TBankAccount(AccountTypes.Normal);
+myAccount.setType(AccountTypes.Saving);
 
 printOut(newLine);
 
 printOut("--- Part 3 ----------------------------------------------------------------------------------------------");
 /* Put your code below here!*/
-
 myAccount.deposit(100);
 myAccount.withdraw(25);
-printOut(`My account balance is ${myAccount.getBalance()}`);
+printOut("My account balance is " + myAccount.getBalance());
 
 printOut(newLine);
 
 printOut("--- Part 4 ----------------------------------------------------------------------------------------------");
 /* Put your code below here!*/
-
 myAccount.deposit(25);
 myAccount.withdraw(30);
 myAccount.withdraw(30);
 myAccount.withdraw(30);
-myAccount.setType(AccountType.Pension);
 myAccount.withdraw(30);
-myAccount.setType(AccountType.Saving);
+myAccount.setType(AccountTypes.Pensjon);
+myAccount.withdraw(30);
+myAccount.setType(AccountTypes.Normal);
 myAccount.withdraw(10);
 
 printOut(newLine);
 
 printOut("--- Part 5 ----------------------------------------------------------------------------------------------");
 /* Put your code below here!*/
-
 myAccount.deposit(150);
 printOut(newLine);
 
 printOut("--- Part 6 ----------------------------------------------------------------------------------------------");
 /* Put your code below here!*/
-
 myAccount.setCurrencyType(CurrencyTypes.SEK);
 myAccount.setCurrencyType(CurrencyTypes.USD);
 myAccount.setCurrencyType(CurrencyTypes.NOK);
@@ -148,11 +151,9 @@ printOut(newLine);
 
 printOut("--- Part 7 ----------------------------------------------------------------------------------------------");
 /* Put your code below here!*/
-
 myAccount.deposit(12, CurrencyTypes.USD);
 myAccount.withdraw(10, CurrencyTypes.GBP);
 myAccount.setCurrencyType(CurrencyTypes.CAD);
 myAccount.setCurrencyType(CurrencyTypes.INR);
 myAccount.withdraw(150.1585, CurrencyTypes.SEK);
-
 printOut(newLine);

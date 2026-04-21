@@ -31,54 +31,55 @@ const SpriteInfoList = {
   medal:        { x: 985 , y: 635 , width: 44   , height: 44  , count: 4  },
 };
 
-export const EGameStatus = { idle: 0, gaming: 1, heroIsDead: 2, gameOver: 3, 
-  state: 0 };
+export const EGameStatus = { idle: 0, countDown: 1, gaming: 2, heroIsDead: 3, gameOver: 4, state: 0 };
 const background = new TBackground(spcvs, SpriteInfoList);
 export const hero = new THero(spcvs, SpriteInfoList.hero1);
 const obstacles = [];
 const baits = [];
-const menu = new TMenu(spcvs, SpriteInfoList);
+export const menu = new TMenu(spcvs, SpriteInfoList);
+let obstaclePassed = false;
 
 //--------------- Functions ----------------------------------------------//
-export function startGame(){
+export function startGame() {
   EGameStatus.state = EGameStatus.gaming;
   setTimeout(spawnObstacle, 1000);
   setTimeout(spawnBait, 1000);
 }
 
-function spawnBait(){
-  if(EGameStatus.state === EGameStatus.gaming){
-  const bait = new TBait(spcvs, SpriteInfoList.food);
-  baits.push(bait);
-  const nextTime = Math.ceil(Math.random() * 3) + 1;
-  setTimeout(spawnBait, nextTime * 1000);
+function spawnBait() {
+  if (EGameStatus.state === EGameStatus.gaming) {
+    const bait = new TBait(spcvs, SpriteInfoList.food);
+    baits.push(bait);
+    const nextTime = Math.ceil(Math.random() * 3) + 1;
+    setTimeout(spawnBait, nextTime * 1000);
   }
 }
 
 function spawnObstacle() {
-  if(EGameStatus.state === EGameStatus.gaming){
-  const obstacle = new TObstacle(spcvs, SpriteInfoList.obstacle);
-  obstacles.push(obstacle);
-  const nextTime = Math.ceil(Math.random() * 3) + 1;
-  setTimeout(spawnObstacle, nextTime * 1000);
+  if (EGameStatus.state === EGameStatus.gaming) {
+    const obstacle = new TObstacle(spcvs, SpriteInfoList.obstacle);
+    obstacles.push(obstacle);
+    const nextTime = Math.ceil(Math.random() * 3) + 1;
+    setTimeout(spawnObstacle, nextTime * 1000);
   }
 }
 
 function animateGame() {
   hero.animate();
   let eaten = -1;
-  for(let i = 0; i < baits.length; i++){
+  for (let i = 0; i < baits.length; i++) {
     const bait = baits[i];
     bait.animate();
-    if(bait.distanceTo(hero.center) < 20){
-     eaten = i; 
+    if (bait.distanceTo(hero.center) < 20) {
+      eaten = i;
     }
   }
-  if(eaten >= 0){
+  if (eaten >= 0) {
     console.log("Eaten!");
     baits.splice(eaten, 1);
+    hero.eat();
   }
-  
+
   if (EGameStatus.state === EGameStatus.gaming) {
     background.animate();
     let deleteObstacle = false;
@@ -87,6 +88,12 @@ function animateGame() {
       obstacle.animate();
       if (obstacle.x < -50) {
         deleteObstacle = true;
+        obstaclePassed = false;
+      }else if((obstacle.x + obstacle.width) < hero.x){
+        if(!obstaclePassed){
+          menu.incGameScore(1);
+          obstaclePassed = true;
+        }
       }
     }
     if (deleteObstacle) {
@@ -97,7 +104,7 @@ function animateGame() {
 
 function drawGame() {
   background.drawBackground();
-  for(let i = 0; i < baits.length; i++){
+  for (let i = 0; i < baits.length; i++) {
     const bait = baits[i];
     bait.draw();
   }
@@ -122,18 +129,17 @@ function loadGame() {
 
   //Start animate engine
   setInterval(animateGame, 10);
-  
 } // end of loadGame
 
 function onKeyDown(aEvent) {
   switch (aEvent.code) {
     case "Space":
       console.log("Space key pressed, flap the hero!");
-      if(EGameStatus.state !== EGameStatus.heroIsDead){
-          hero.flap();
+      if (EGameStatus.state !== EGameStatus.heroIsDead) {
+        hero.flap();
       }
       break;
-  } 
+  }
 } // end of onKeyDown
 
 function setSoundOnOff() {

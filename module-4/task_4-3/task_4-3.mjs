@@ -1,10 +1,19 @@
 "use strict";
 
-const SeasonTypes = [
-  { value: 1, caption: "Spring" },
-  { value: 2, caption: "Summer" },
-  { value: 3, caption: "Autumn" },
-  { value: 4, caption: "Winter" },
+const CarTypes = [
+  { value: 1, caption: "Aston Martin" },
+  { value: 2, caption: "Bentley" },
+  { value: 3, caption: "Alfa Romeo" },
+  { value: 4, caption: "Ferrari" },
+  { value: 5, caption: "Subaru" },
+  { value: 6, caption: "Porsche" },
+  { value: 7, caption: "Tesla" },
+  { value: 8, caption: "Toyota" },
+  { value: 9, caption: "Renault" },
+  { value: 10, caption: "Peugeot" },
+  { value: 11, caption: "Suzuki" },
+  { value: 12, caption: "Mitsubishi" },
+  { value: 13, caption: "Nissan" },
 ];
 
 const GirlsNames = ["Anne", "Inger", "Kari", "Marit", "Ingrid", "Liv", "Eva", "Berit", "Astrid", "Bjørg", "Hilde", "Anna", "Solveig", "Marianne", "Randi", "Ida", "Nina", "Maria", "Elisabeth", "Kristin"];
@@ -36,93 +45,85 @@ const MovieGenre = [
   "Western",
 ];
 
+
 //--- Part 1 ----------------------------------------------------------------------------------------------
 /* Put your code below here!*/
-
 function cmbTask1CalculateClick() {
-  const Task1Output = document.getElementById("txtTask1Output");
+  const txtTask1Output = document.getElementById("txtTask1Output");
   const txtRectHeight = document.getElementById("txtRectHeight");
   const txtRectWidth = document.getElementById("txtRectWidth");
-
   const width = parseInt(txtRectWidth.value);
   const height = parseInt(txtRectHeight.value);
   const area = width * height;
   const perimeter = 2 * (width + height);
-
-  Task1Output.innerHTML = `Width: ${width}, Height: ${height}`;
-  Task1Output.innerHTML += `<br/>Circumference = ${perimeter}, Area = ${area}`;
+  txtTask1Output.innerHTML = `width: ${width}, height: ${height}`;
+  txtTask1Output.innerHTML += `<br/>Circumference = ${perimeter}, Area = ${area}`;
 }
 
 let cmbTask1Calculate = document.getElementById("cmbTask1Calculate");
 cmbTask1Calculate.onclick = cmbTask1CalculateClick;
-
 //--- Part 2 ----------------------------------------------------------------------------------------------
 /* Put your code below here!*/
 
-function pressKey(event) {
-  const Task2Output = document.getElementById("txtTask2Output"); // Output area for Task 2
-
-  if (event.key === "Enter" || event.key === "Return") {
-    const word = txtTask2Word.value; // Get the value from the input field
-    Task2WordsArray.push(word); // Add the word to the array
-
-    Task2Output.innerHTML = `You have entered ${Task2WordsArray.length} words: <br/>`;
-    Task2Output.innerHTML += Task2WordsArray.join(", ");
+function txtTask2WordKeyPress(aEvent) {
+  const txtTask2Output = document.getElementById("txtTask2Output");
+  //txtTask2Output.innerHTML = `You pressed the key: ${aEvent.key}`;
+  if (aEvent.key === "Enter") {
+    const word = txtTask2Word.value;
+    task2Words.push(word);
+    txtTask2Output.innerHTML = `You have entered ${task2Words.length} words: <br/>`;
+    txtTask2Output.innerHTML += task2Words.join(", ");
     txtTask2Word.value = "";
   }
 }
 
 const txtTask2Word = document.getElementById("txtTask2Word");
-txtTask2Word.addEventListener("keypress", pressKey);
-const Task2WordsArray = [];
+txtTask2Word.addEventListener("keypress", txtTask2WordKeyPress);
+const task2Words = [];
 
 //--- Part 3 ----------------------------------------------------------------------------------------------
 /* Put your code below here!*/
-const chkTask3 = document.getElementsByName("chkTask3"); // Get all checkbox elements
-const cmbTask3CheckAnswer = document.getElementById("cmbTask3CheckAnswer"); // Get the check answer button
-const Task3Output = document.getElementById("txtTask3Output");
-function CheckAnswerClick() {
-  Task3Output.innerHTML = "";
+const chkTask3 = document.getElementsByName("chkTask3");
+const cmbTask3CheckAnswer = document.getElementById("cmbTask3CheckAnswer");
+const txtTask3Output = document.getElementById("txtTask3Output");
+function cmbTask3CheckAnswerClick() {
+  txtTask3Output.innerHTML = "";
   for (let i = 0; i < chkTask3.length; i++) {
     const chkBox = chkTask3[i];
-    const text = `Check box ${i + 1} checked? ${chkBox.checked}`;
-    Task3Output.innerHTML += text + "<br/>";
+    const text = `chkTask3[${i}].checked =  ${chkBox.checked}`;
+    txtTask3Output.innerHTML += text + "<br/>";
   }
 }
-cmbTask3CheckAnswer.addEventListener("click", CheckAnswerClick);
-
+cmbTask3CheckAnswer.addEventListener("click", cmbTask3CheckAnswerClick);
 //--- Part 4 ----------------------------------------------------------------------------------------------
 /* Put your code below here!*/
-
 function rdbCarNameSelect(aEvent){
   const txtTask4Output = document.getElementById("txtTask4Output");
   txtTask4Output.innerHTML =
-    `User select season type number: ${aEvent.target.value}`
+    `User select car type number: ${aEvent.target.value}`
   ;
 } 
 
-const divTask4Season = document.getElementById("divTask4Season");
-for(let i = 0; i < SeasonTypes.length; i++){
-  const season = SeasonTypes[i];
+const divTask4Cars = document.getElementById("divTask4Cars");
+for(let i = 0; i < CarTypes.length; i++){
+  const car = CarTypes[i];
   const inpRadio = document.createElement("input");
   inpRadio.type = "radio";
-  inpRadio.name = "rdbSeason";
-  inpRadio.value = season.value;
-  inpRadio.id = "rdbSeason" + i.toString();
+  inpRadio.name = "rdbCarName";
+  inpRadio.value = car.value;
+  inpRadio.id = "rdbCarName" + i.toString();
   inpRadio.addEventListener("change", rdbCarNameSelect);
   const lblCaption = document.createElement("label");
   lblCaption.for = inpRadio.id;
-  lblCaption.appendChild(document.createTextNode(season.caption));
-  divTask4Season.appendChild(inpRadio);
-  divTask4Season.appendChild(lblCaption);
-  divTask4Season.appendChild(document.createElement("br"));
+  lblCaption.appendChild(document.createTextNode(car.caption));
+  divTask4Cars.appendChild(inpRadio);
+  divTask4Cars.appendChild(lblCaption);
+  divTask4Cars.appendChild(document.createElement("br"));
 
-  console.log(`SeasonTypes[${i}].value = ${season.value}, SeasonTypes[${i}].caption = ${season.caption}`)
+  console.log(`CarTypes[${i}].value = ${car.value}, CarTypes[${i}].caption = ${car.caption}`)
 }
-
 //--- Part 5 ----------------------------------------------------------------------------------------------
 /* Put your code below here!*/
-
 const selectTask5Animals = document.getElementById("selectTask5Animals");
 const txtTask5Output = document.getElementById("txtTask5Output");
 
@@ -134,7 +135,6 @@ selectTask5Animals.addEventListener("change", SelectTask5AnimalsChange);
 
 //--- Part 6 ----------------------------------------------------------------------------------------------
 /* Put your code below here!*/
-
 const selectTask6Girls = document.getElementById("selectTask6Girls");
 const txtTask6Output = document.getElementById("txtTask6Output");
  
@@ -153,7 +153,6 @@ selectTask6Girls.addEventListener("change", SelectGirlsChange);
 
 //--- Part 7 ----------------------------------------------------------------------------------------------
 /* Put your code below here!*/
-
 const txtMovieTitle = document.getElementById("txtMovieTitle");
 const selectMovieGenre = document.getElementById("selectMovieGenre");
 const txtMovieDirector = document.getElementById("txtMovieDirector");
