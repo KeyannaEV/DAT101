@@ -11,6 +11,10 @@ export class TBackground{
     this.#spriteGround = new TSprite(aSpcvs, aSPI.ground, 0, groundPosY);
   }
 
+  setDayNight(aIsDay) {
+    this.#spriteBackground.index = aIsDay ? 0 : 1;
+  }
+
   drawBackground(){
     this.#spriteBackground.draw();
   }

@@ -16,7 +16,7 @@ export class THero extends TSprite {
   #sfHeroIsDead;
   #sfGameOver;
   constructor(aSpcvs, aSPI) {
-    super(aSpcvs, aSPI, 100, 20);
+    super(aSpcvs, aSPI, 270, 150);
     this.animationSpeed = 20;
     this.#gravity = 9.81 / 100;
     this.#speed = 0;
@@ -48,12 +48,15 @@ export class THero extends TSprite {
           this.rotation = this.#speed * 25; // tilt down based on speed
         }
       } else {
+        if (EGameStatus.state !== EGameStatus.gameOver) {
         EGameStatus.state = EGameStatus.gameOver;
         menu.stopSound();
+        menu.showGameOver();
         this.animationSpeed = 0;
         this.#sfGameOver = new TSoundFile(fnGameOver);
         this.#sfGameOver.play();
       }
+    }
     } else if (EGameStatus.state === EGameStatus.idle) {
       this.y += this.#wave.value;
     }
@@ -67,5 +70,13 @@ export class THero extends TSprite {
   flap() {
     this.#speed = -3.5;
     this.rotation = 0;
+  }
+
+  restart() {
+    this.x = 100;
+    this.y = 180;
+    this.#speed = 0;
+    this.rotation = 0;
+    this.animationSpeed = 20;
   }
 }
