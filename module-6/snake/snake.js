@@ -87,22 +87,23 @@ class TSnakeHead extends TSnakePart {
   checkCollision() {
     let collision = this.boardCell.row < 0 || this.boardCell.row >= GameProps.gameBoard.rows || this.boardCell.col < 0 || this.boardCell.col >= GameProps.gameBoard.cols;
     if(!collision) {
-      const boardCellInfo = GameProps.gameBoard.getCell(this.boardCell.row, this.boardCell.col);
-      collision = boardCellInfo.infoType === EBoardCellInfoType.Snake;
+      const boardCellInfo = GameProps.gameBoard.getCell(this.boardCell.row, this.boardCell.col); 
+      collision = boardCellInfo.infoType === EBoardCellInfoType.Snake; 
     }
     return collision; // Collision detected
   }
 }
 
 class TSnakeBody extends TSnakePart {
-  constructor(aSpriteCanvas, aBoardCell ) {
-    super(aSpriteCanvas, SheetData.Body, aBoardCell);
-    this.index = ESpriteIndex.RL;    
+  constructor(aSpriteCanvas, aCol, aRow) {
+    super(aSpriteCanvas, SheetData.Body, aCol, aRow);
+    this.index = ESpriteIndex.RL;
   }
 
   update(){
     let spriteIndex = ESpriteIndex.RL;
     let boardCellInfo;
+
     switch (this.direction) {
       case EDirection.Up:
         this.boardCell.row--;
@@ -175,6 +176,7 @@ class TSnakeBody extends TSnakePart {
   }
 
   clone(){
+    console.log("Cloning snake body segment");
     const newBody = new TSnakeBody(this.spcvs, new TBoardCell(this.boardCell.col, this.boardCell.row));
     newBody.index = this.index;
     newBody.direction = this.direction;
@@ -190,6 +192,9 @@ class TSnakeTail extends TSnakePart {
   }
 
   update(){
+    const oldRow = this.boardCell.row;
+    const oldCol = this.boardCell.col;
+
     switch (this.direction) {
       case EDirection.Up:
         this.boardCell.row--;
@@ -204,6 +209,9 @@ class TSnakeTail extends TSnakePart {
         this.boardCell.row++;
         break;
     }
+
+    GameProps.gameBoard.getCell(oldRow, oldCol).infoType = EBoardCellInfoType.Empty; // Clear the old cell, when the tail moves **Claudie.Ai**
+
     const boardCellInfo = GameProps.gameBoard.getCell(this.boardCell.row, this.boardCell.col);
     boardCellInfo.infoType = EBoardCellInfoType.Empty; // Clear the cell, when the tail moves
     this.direction = boardCellInfo.direction;
@@ -219,6 +227,7 @@ export class TSnake {
   #head = null;
   #body = null;
   #tail = null;
+  #newSegment = null;
   constructor(aSpriteCanvas, aBoardCell) {
     this.#head = new TSnakeHead(aSpriteCanvas, aBoardCell);
     let col = aBoardCell.col - 1;
@@ -244,8 +253,14 @@ export class TSnake {
       for (let i = 0; i < this.#body.length; i++) {
         this.#body[i].update();
       }
-      this.#tail.update();  
-    }else if(!this.#isDead){
+      // her flyttes halen, ikke flytt denne hvis slangen spiser
+      if(this.#newSegment) {
+        this.#body.push(this.#newSegment);
+        this.#newSegment = null;
+      } else {
+      this.#tail.update();
+      }
+    } else if(!this.#isDead){
       this.#isDead = true;
       return false; // Collision detected, do not continue
     }
@@ -255,4 +270,9 @@ export class TSnake {
   setDirection(aDirection) {
     this.#head.setDirection(aDirection);
   } // setDirection
+
+  grow() {
+    const lastBody = this.#body[this.#body.length - 1];
+   this.#newSegment = lastBody.clone();
+  }
 }

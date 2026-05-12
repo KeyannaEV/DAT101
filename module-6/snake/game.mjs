@@ -3,10 +3,11 @@
 //-----------------------------------------------------------------------------------------
 //----------- Import modules, mjs files  ---------------------------------------------------
 //-----------------------------------------------------------------------------------------
-import { TSpriteCanvas } from "libSprite";
+import { TSpriteCanvas, } from "libSprite";
 import { TGameBoard, GameBoardSize, TBoardCell } from "./gameBoard.js";
 import { TSnake, EDirection } from "./snake.js";
 import { TBait } from "./bait.js";
+import { TMenu } from "./menu.js";
 
 //-----------------------------------------------------------------------------------------
 //----------- variables and object --------------------------------------------------------
@@ -16,6 +17,8 @@ const spcvs = new TSpriteCanvas(cvs);
 let gameSpeed = 4; // Game speed multiplier;
 let hndUpdateGame = null;
 export const EGameStatus = { Idle: 0, Playing: 1, Pause: 2, GameOver: 3 };
+
+let menu = null;
 
 
 
@@ -56,6 +59,9 @@ export function baitIsEaten() {
   console.log("Bait eaten!");
   /* Logic to increase the snake size and score when bait is eaten */
 
+  GameProps.snake.grow(); // Grow the snake
+  GameProps.bait.update();
+  menu.incScore(1); // Increment score by 1
   increaseGameSpeed(); // Increase game speed
 }
 
@@ -67,12 +73,14 @@ export function baitIsEaten() {
 function loadGame() {
   cvs.width = GameBoardSize.Cols * SheetData.Head.width;
   cvs.height = GameBoardSize.Rows * SheetData.Head.height;
+  spcvs.updateBoundsRect();
 
-  GameProps.gameStatus = EGameStatus.Playing; // change game status to Idle
+  GameProps.gameStatus = EGameStatus.Idle; // change game status to Idle (DONEEE!)
 
-  /* Create the game menu here */ 
+  /* Create the game menu here */
+  menu = new TMenu(spcvs);
 
-  newGame(); // Call this function from the menu to start a new game, remove this line when the menu is ready
+  //newGame(); // Call this function from the menu to start a new game, remove this line when the menu is ready
 
   requestAnimationFrame(drawGame);
   console.log("Game canvas is rendering!");
@@ -93,6 +101,7 @@ function drawGame() {
   }
   // Request the next frame
   requestAnimationFrame(drawGame);
+  menu.draw();
 }
 
 function updateGame() {
@@ -103,6 +112,7 @@ function updateGame() {
       if (!GameProps.snake.update()) {
         GameProps.gameStatus = EGameStatus.GameOver;
         console.log("Game over!");
+        menu.showGameOver(); //UPDATED!!
       }
       break;
   }
@@ -134,13 +144,18 @@ function onKeyDown(event) {
       break;
     case " ":
       console.log("Space key pressed!");
-      /* Pause the game logic here */
-      
+      /* Pause the game logic here */ // GOT THE METHOD FROM CLAUDE.AI!! 
+      if (GameProps.gameStatus === EGameStatus.Playing) {
+          GameProps.gameStatus = EGameStatus.Pause;
+          menu.showPause();
+      }
+
       break;
     default:
       console.log(`Key pressed: "${event.key}"`);
   }
 }
+
 //-----------------------------------------------------------------------------------------
 //----------- main -----------------------------------------------------------------------
 //-----------------------------------------------------------------------------------------
