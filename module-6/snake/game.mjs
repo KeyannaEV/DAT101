@@ -62,7 +62,7 @@ export function baitIsEaten() {
   GameProps.snake.grow(); // Grow the snake
   GameProps.bait.update();
   menu.incScore(1); // Increment score by 1
-  increaseGameSpeed(); // Increase game speed
+  increaseGameSpeed(2); // Increase game speed - Updated so u can increase the speed here!
 }
 
 
@@ -118,9 +118,12 @@ function updateGame() {
   }
 }
 
-function increaseGameSpeed() {
+function increaseGameSpeed(aAmount) { // Used Claude.Ai so i can use arguments - added aAmount inside the function.
   /* Increase game speed logic here */
-  console.log("Increase game speed!");
+  console.log("Increase game speed! By:", gameSpeed);
+  gameSpeed += aAmount; // Increase game speed by aAmount, which is can be changed/written in the function baitIsEaten argument
+  clearInterval(hndUpdateGame);
+  hndUpdateGame = setInterval(updateGame, 1000 / gameSpeed);
 }
 
 
